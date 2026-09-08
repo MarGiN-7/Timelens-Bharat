@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { EraId, EraVisualConfig } from "@/data/redFortExperience";
+import { LensId } from "@/data/livingHistory";
+import { PerspectiveLensSelector } from "@/components/experience/PerspectiveLensSelector";
 import {
   ArrowLeft,
   Compass,
@@ -18,6 +20,8 @@ interface ExperienceHUDProps {
   availableEras: EraVisualConfig[];
   onSelectEra: (eraId: EraId) => void;
   activeHotspotCount: number;
+  activeLens: LensId;
+  onSelectLens: (lensId: LensId) => void;
 }
 
 export function ExperienceHUD({
@@ -25,6 +29,8 @@ export function ExperienceHUD({
   availableEras,
   onSelectEra,
   activeHotspotCount,
+  activeLens,
+  onSelectLens,
 }: ExperienceHUDProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -148,6 +154,15 @@ export function ExperienceHUD({
           <Sparkles className="w-3 h-3 text-[#C8A96B]" />
           <span>{activeHotspotCount} INTERACTIVE HOTSPOTS • CLICK GOLD MARKERS TO INSPECT</span>
         </div>
+      </div>
+
+      {/* Living History PerspectiveLens */}
+      <div className="self-center w-full max-w-xl pointer-events-auto px-2 sm:px-0">
+        <PerspectiveLensSelector
+          activeLens={activeLens}
+          onSelectLens={onSelectLens}
+          compact
+        />
       </div>
 
       {/* Bottom Control & Telemetry Bar */}
