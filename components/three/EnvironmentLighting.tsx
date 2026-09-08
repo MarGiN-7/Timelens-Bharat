@@ -48,7 +48,11 @@ export function EnvironmentLighting({ config }: EnvironmentLightingProps) {
 
       {/* Secondary Fill Light from opposite angle */}
       <directionalLight
-        position={[-lighting.sunPosition[0] * 0.7, 10, -lighting.sunPosition[2] * 0.7]}
+        position={[
+          -lighting.sunPosition[0] * 0.7,
+          10,
+          -lighting.sunPosition[2] * 0.7,
+        ]}
         intensity={lighting.sunIntensity * 0.25}
         color={lighting.ambientColor}
       />
@@ -61,7 +65,9 @@ export function EnvironmentLighting({ config }: EnvironmentLightingProps) {
 
       {/* Hemisphere Light for natural sky-ground gradient */}
       <hemisphereLight
-        args={[lighting.skyColor, lighting.groundColor, lighting.ambientIntensity * 0.6]}
+        color={lighting.skyColor as THREE.ColorRepresentation}
+        groundColor={lighting.groundColor as THREE.ColorRepresentation}
+        intensity={lighting.ambientIntensity * 0.6}
       />
     </>
   );

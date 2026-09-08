@@ -41,6 +41,13 @@ export function DustParticles({
     return [pos, vel];
   }, [count, speed]);
 
+  // Build a BufferGeometry once, imperatively
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    return geo;
+  }, [positions]);
+
   useFrame(() => {
     if (!pointsRef.current) return;
     const posAttr = pointsRef.current.geometry.attributes.position;
@@ -69,13 +76,7 @@ export function DustParticles({
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-      </bufferGeometry>
+    <points ref={pointsRef} geometry={geometry}>
       <pointsMaterial
         color={color}
         size={size}
@@ -83,6 +84,7 @@ export function DustParticles({
         opacity={opacity}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
+        sizeAttenuation
       />
     </points>
   );

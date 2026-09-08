@@ -2,6 +2,7 @@
 
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
 import { EraVisualConfig, HotspotData } from "@/data/redFortExperience";
 import { RedFortScene } from "./RedFortScene";
 
@@ -22,7 +23,7 @@ export function ExperienceCanvas({
     <div className="relative w-full h-full min-h-[600px] bg-[#08090A] overflow-hidden">
       <Canvas
         shadows
-        dpr={[1, 1.75]} // Cap max DPR to 1.75 for smooth performance across standard laptops
+        dpr={[1, 1.75]}
         camera={{
           position: [10, 6, 15],
           fov: 52,
@@ -33,6 +34,7 @@ export function ExperienceCanvas({
           antialias: true,
           alpha: false,
           powerPreference: "high-performance",
+          toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.05,
         }}
       >
