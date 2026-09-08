@@ -6,6 +6,7 @@ import { ERA_CONFIGS, RED_FORT_HOTSPOTS, EraVisualConfig, HotspotData } from "@/
 import { ExperienceCanvas } from "@/components/three/ExperienceCanvas";
 import { ExperienceHUD } from "@/components/experience/ExperienceHUD";
 import { HotspotModal } from "@/components/experience/HotspotModal";
+import { LensId } from "@/data/livingHistory";
 
 interface ExperienceShellProps {
   monumentName: string;
@@ -33,6 +34,7 @@ export function ExperienceShell({
 
   const [selectedHotspot, setSelectedHotspot] = useState<HotspotData | null>(null);
   const [selectedHotspotId, setSelectedHotspotId] = useState<string | null>(null);
+  const [activeLens, setActiveLens] = useState<LensId>("royal");
 
   const handleSelectHotspot = useCallback((hotspot: HotspotData) => {
     setSelectedHotspot(hotspot);
@@ -77,10 +79,16 @@ export function ExperienceShell({
         availableEras={availableVisuals}
         onSelectEra={onSelectEra}
         activeHotspotCount={RED_FORT_HOTSPOTS.length}
+        activeLens={activeLens}
+        onSelectLens={setActiveLens}
       />
 
       {/* ── Hotspot detail modal (portal to fixed) ── */}
-      <HotspotModal hotspot={selectedHotspot} onClose={handleCloseModal} />
+      <HotspotModal
+        hotspot={selectedHotspot}
+        activeLens={activeLens}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
