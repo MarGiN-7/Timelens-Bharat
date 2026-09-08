@@ -1,16 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HotspotData } from "@/data/redFortExperience";
-import { X, Award, Landmark, ShieldCheck } from "lucide-react";
+import { X, Award, Landmark, ShieldCheck, Clock3, BookOpen } from "lucide-react";
+import { getLens, getNarrative, LensId } from "@/data/livingHistory";
+import { NarrationPlayer } from "@/components/experience/NarrationPlayer";
 
 interface HotspotModalProps {
   hotspot: HotspotData | null;
+  activeLens: LensId;
   onClose: () => void;
 }
 
-export function HotspotModal({ hotspot, onClose }: HotspotModalProps) {
+export function HotspotModal({ hotspot, activeLens, onClose }: HotspotModalProps) {
+  const narrative = hotspot ? getNarrative(hotspot.id, activeLens) : undefined;
+  const lens = getLens(activeLens);
+
+  useEffect(() => {
+    if (!hotspot) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [hotspot, onClose]);
+
   return (
     <AnimatePresence>
       {hotspot && (
@@ -78,6 +93,41 @@ export function HotspotModal({ hotspot, onClose }: HotspotModalProps) {
               <p className="text-sm text-[#F5F1E8]/90 leading-relaxed font-normal">
                 {hotspot.description}
               </p>
+
+              {/* Living History Narrative */}
+              {narrative && (
+                <div className="rounded-2xl border border-[#C8A96B]/30 bg-gradient-to-br from-[#151719] to-[#08090A] p-4 sm:p-5">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider" style={{ color: lens.accentColor }}>
+                        <BookOpen className="w-3.5 h-3.5" />
+                        {lens.label}
+                      </div>
+                      <p className="mt-1 text-xs font-semibold text-[#F5F1E8]">{lens.persona}</p>
+                      <p className="text-[10px] text-[#A6A39C]">{lens.personaRole}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 rounded-full border border-white/10 px-2 py-1 text-[9px] font-mono text-[#A6A39C]">
+                      <Clock3 className="h-3 w-3" />
+                      {lens.period}
+                    </div>
+                  </div>
+
+                  <div className="mb-3 rounded-xl border border-white/5 bg-black/20 p-3">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#C8A96B]">Historical Context</p>
+                    <p className="mt-1 text-xs text-[#A6A39C] leading-relaxed">{narrative.historicalPeriod}</p>
+                    <p className="mt-2 text-xs text-[#F5F1E8]/85 leading-relaxed">{narrative.historicalSignificance}</p>
+                  </div>
+
+                  <blockquote className="border-l-2 pl-4 text-sm leading-relaxed text-[#F5F1E8]/95 italic" style={{ borderColor: lens.accentColor }}>
+                    “{narrative.narrative}”
+                  </blockquote>
+                  <p className="mt-3 text-[10px] font-mono text-[#A6A39C]">— {narrative.narrator}</p>
+
+                  <div className="mt-4">
+                    <NarrationPlayer text={narrative.narrative} label={`Narrated by ${lens.persona}`} />
+                  </div>
+                </div>
+              )}
 
               {/* Architectural Notes */}
               <div className="p-4 rounded-xl border border-[#C8A96B]/20 bg-[#08090A]/70">
